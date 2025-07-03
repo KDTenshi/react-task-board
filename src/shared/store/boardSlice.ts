@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { TColumn } from "../types/types";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { TColumn, TTask } from "../types/types";
 
 type BoardState = {
   columns: TColumn[];
@@ -15,5 +15,33 @@ const initialState: BoardState = {
 export const boardSlice = createSlice({
   name: "board",
   initialState,
-  reducers: {},
+  reducers: {
+    addTask: (state, action: PayloadAction<{ columnId: string; title: string }>) => {
+      const { columnId, title } = action.payload;
+
+      const column = state.columns.find((column) => column.id === columnId);
+
+      if (column) {
+        const newTask: TTask = {
+          id: `${Date.now()}`,
+          title,
+          description: "",
+          date: Date.now(),
+        };
+
+        column.tasks.push(newTask);
+      }
+    },
+    deleteTask: (state, action: PayloadAction<{ taskId: string }>) => {
+      const { taskId } = action.payload;
+
+      const column = state.columns.find((column) => column.tasks.some((task) => task.id === taskId));
+
+      if (column) {
+        column.tasks = column.tasks.filter((task) => task.id !== taskId);
+      }
+    },
+  },
 });
+
+export const { addTask, deleteTask } = boardSlice.actions;

@@ -63,6 +63,28 @@
   background: c.$grey-dark;
 }
 
+.Add {
+  padding: s.$xs s.$s;
+  font-size: 15px;
+  font-weight: 400;
+  background: c.$grey-dark;
+  border: 2px solid c.$grey-dark;
+  color: c.$grey-light;
+  cursor: pointer;
+
+  &:hover {
+    background: c.$grey-light;
+    border-color: c.$grey-light;
+    color: c.$grey-dark;
+  }
+
+  &:active {
+    background: c.$grey;
+    border-color: c.$grey-light;
+    color: c.$grey-light;
+  }
+}
+
 .Empty {
   font-size: 20px;
   font-weight: 500;
