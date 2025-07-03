@@ -1,0 +1,14 @@
+@use "../../shared/style/colors" as c;
+@use "../../shared/style/spacings" as s;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  width: 100%;
+  min-height: 100vh;
+  background: c.$white;
+}
