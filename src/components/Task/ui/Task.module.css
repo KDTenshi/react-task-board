@@ -1,0 +1,57 @@
+.Task {
+  background: #343a40;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 2px solid #212529;
+}
+
+.Info {
+  padding: 5px 10px;
+  border-bottom: 2px solid #212529;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.Title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #e9ecef;
+}
+
+.Date {
+  margin-left: 5px;
+  font-size: 15px;
+  color: #adb5bd;
+  font-weight: 400;
+}
+
+.Actions {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
+
+.Button {
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 400;
+  background: #343a40;
+  border: 2px solid #343a40;
+  color: #adb5bd;
+  cursor: pointer;
+}
+.Button:hover {
+  background: #adb5bd;
+  border-color: #adb5bd;
+  color: #343a40;
+}
+.Button:active {
+  background: #495057;
+  border-color: #adb5bd;
+  color: #adb5bd;
+}/*# sourceMappingURL=Task.module.css.map */

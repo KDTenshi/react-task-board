@@ -1,1 +1,1 @@
-{"version":3,"sources":["App.scss","App.css","../../shared/style/_colors.scss"],"names":[],"mappings":"AAGA;EACE,SAAA;EACA,UAAA;EACA,sBAAA;ACFF;;ADKA;EACE,WAAA;EACA,iBAAA;EACA,mBEZM;ADUR","file":"App.css"}
+{"version":3,"sources":["App.scss","App.css","../../shared/style/_colors.scss"],"names":[],"mappings":"AAGA;EACE,SAAA;EACA,UAAA;EACA,sBAAA;EACA,gCAAA;ACFF;;ADKA;EACE,WAAA;EACA,iBAAA;EACA,mBETM;ADOR","file":"App.css"}

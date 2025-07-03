@@ -1,0 +1,12 @@
+@use "../../../shared/style/colors" as c;
+@use "../../../shared/style/spacings" as s;
+@import "../../../shared/style/mixins";
+
+.Board {
+  background: c.$black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: s.$m;
+  gap: s.$m;
+}

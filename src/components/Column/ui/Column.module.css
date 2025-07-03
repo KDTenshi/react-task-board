@@ -1,0 +1,65 @@
+.Column {
+  background: #212529;
+  border: 2px solid #495057;
+  width: 25vw;
+  padding: 15px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.Head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.Title {
+  font-size: 25px;
+  font-weight: 700;
+  color: #e9ecef;
+}
+
+.Actions {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 10px;
+}
+
+.Button {
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 400;
+  background: #343a40;
+  border: 2px solid #343a40;
+  color: #adb5bd;
+  cursor: pointer;
+}
+.Button:hover {
+  background: #adb5bd;
+  border-color: #adb5bd;
+  color: #343a40;
+}
+.Button:active {
+  background: #495057;
+  border-color: #adb5bd;
+  color: #adb5bd;
+}
+
+.Container {
+  height: 75vh;
+  border: 2px solid #495057;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #343a40;
+}
+
+.Empty {
+  font-size: 20px;
+  font-weight: 500;
+  color: #adb5bd;
+  text-align: center;
+}/*# sourceMappingURL=Column.module.css.map */

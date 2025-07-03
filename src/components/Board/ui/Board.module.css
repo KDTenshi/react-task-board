@@ -1,0 +1,8 @@
+.Board {
+  background: #212529;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  gap: 25px;
+}/*# sourceMappingURL=Board.module.css.map */

@@ -1,0 +1,71 @@
+@use "../../../shared/style/colors" as c;
+@use "../../../shared/style/spacings" as s;
+@import "../../../shared/style/mixins";
+
+.Column {
+  background: c.$black;
+  border: 2px solid c.$grey;
+  width: 25vw;
+  padding: s.$sm s.$m;
+  display: flex;
+  flex-direction: column;
+  gap: s.$sm;
+}
+
+.Head {
+  display: flex;
+  flex-direction: column;
+  gap: s.$s;
+}
+
+.Title {
+  font-size: 25px;
+  font-weight: 700;
+  color: c.$white;
+}
+
+.Actions {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: s.$s;
+}
+
+.Button {
+  padding: s.$xs s.$s;
+  font-size: 15px;
+  font-weight: 400;
+  background: c.$grey-dark;
+  border: 2px solid c.$grey-dark;
+  color: c.$grey-light;
+  cursor: pointer;
+
+  &:hover {
+    background: c.$grey-light;
+    border-color: c.$grey-light;
+    color: c.$grey-dark;
+  }
+
+  &:active {
+    background: c.$grey;
+    border-color: c.$grey-light;
+    color: c.$grey-light;
+  }
+}
+
+.Container {
+  height: 75vh;
+  border: 2px solid c.$grey;
+  padding: s.$s s.$sm;
+  display: flex;
+  flex-direction: column;
+  gap: s.$s;
+  background: c.$grey-dark;
+}
+
+.Empty {
+  font-size: 20px;
+  font-weight: 500;
+  color: c.$grey-light;
+  text-align: center;
+}
