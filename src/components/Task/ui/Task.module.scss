@@ -11,6 +11,22 @@
   border: 2px solid c.$black;
 }
 
+.Edit {
+  padding: s.$s;
+  border-bottom: 2px solid c.$black;
+}
+
+.Input {
+  width: 100%;
+  padding: s.$xs s.$sm;
+  background: c.$grey-dark;
+  border: 2px solid c.$black;
+  outline: 0;
+  color: c.$grey-light;
+  font-size: 20px;
+  font-weight: 500;
+}
+
 .Info {
   padding: s.$xs s.$s;
   border-bottom: 2px solid c.$black;

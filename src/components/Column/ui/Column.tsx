@@ -1,30 +1,71 @@
-import type { FC } from "react";
+import { useState, type FC } from "react";
 import style from "./Column.module.css";
 import type { TColumn } from "../../../shared/types/types";
 import { Task } from "../../Task";
 import { useAppDispatch } from "../../../app/store/appStore";
-import { addTask } from "../../../shared/store/boardSlice";
+import { addTask, deleteColumn, editColumn } from "../../../shared/store/boardSlice";
 
 interface ColumnProps {
   column: TColumn;
 }
 
 const Column: FC<ColumnProps> = ({ column }) => {
+  const [isEdit, setIsEdit] = useState(false);
+  const [value, setValue] = useState(column.title);
+
   const dispatch = useAppDispatch();
 
   const handleAddTask = () => {
     dispatch(addTask({ columnId: column.id, title: "Test Task" }));
   };
 
+  const handleDelete = () => {
+    dispatch(deleteColumn({ columnId: column.id }));
+  };
+
+  const handleEdit = () => {
+    const title = value.trim();
+
+    if (title) {
+      dispatch(editColumn({ columnId: column.id, title }));
+      setValue(title);
+    } else {
+      setValue(column.title);
+    }
+
+    setIsEdit(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleEdit();
+  };
+
   return (
     <div className={style.Column}>
       <div className={style.Head}>
         <div className={style.Actions}>
-          <button className={style.Button}>Edit</button>
-          <button className={style.Button}>Delete</button>
+          <button className={style.Button} onClick={() => setIsEdit((prev) => !prev)}>
+            Edit
+          </button>
+          <button className={style.Button} onClick={handleDelete}>
+            Delete
+          </button>
           <button className={style.Button}>Drag</button>
         </div>
-        <h2 className={style.Title}>{column.title}</h2>
+        {isEdit && (
+          <form className={style.Edit} onSubmit={handleSubmit}>
+            <input
+              type="text"
+              className={style.Input}
+              autoFocus
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onBlur={handleEdit}
+            />
+          </form>
+        )}
+        {!isEdit && <h2 className={style.Title}>{column.title}</h2>}
       </div>
       <div className={style.Container}>
         <button className={style.Add} onClick={handleAddTask}>

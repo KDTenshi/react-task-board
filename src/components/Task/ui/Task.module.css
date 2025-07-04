@@ -7,6 +7,22 @@
   border: 2px solid #212529;
 }
 
+.Edit {
+  padding: 10px;
+  border-bottom: 2px solid #212529;
+}
+
+.Input {
+  width: 100%;
+  padding: 5px 15px;
+  background: #343a40;
+  border: 2px solid #212529;
+  outline: 0;
+  color: #adb5bd;
+  font-size: 20px;
+  font-weight: 500;
+}
+
 .Info {
   padding: 5px 10px;
   border-bottom: 2px solid #212529;

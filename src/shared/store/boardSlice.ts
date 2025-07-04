@@ -7,8 +7,8 @@ type BoardState = {
 
 const initialState: BoardState = {
   columns: [
-    { id: "c001", title: "To Do", tasks: [{ id: "001", title: "Task 1", description: "", date: 123 }] },
-    { id: "c002", title: "To Do 2", tasks: [{ id: "002", title: "Task 2", description: "", date: 123 }] },
+    { id: "c001", title: "To Do", tasks: [{ id: "001", title: "Task 1", date: 123 }] },
+    { id: "c002", title: "To Do 2", tasks: [{ id: "002", title: "Task 2", date: 123 }] },
   ],
 };
 
@@ -25,7 +25,6 @@ export const boardSlice = createSlice({
         const newTask: TTask = {
           id: `${Date.now()}`,
           title,
-          description: "",
           date: Date.now(),
         };
 
@@ -41,7 +40,42 @@ export const boardSlice = createSlice({
         column.tasks = column.tasks.filter((task) => task.id !== taskId);
       }
     },
+    editTask: (state, action: PayloadAction<{ taskId: string; title: string }>) => {
+      const { taskId, title } = action.payload;
+
+      const column = state.columns.find((column) => column.tasks.some((task) => task.id === taskId));
+
+      if (column) {
+        const task = column.tasks.find((task) => task.id === taskId);
+
+        if (task) task.title = title;
+      }
+    },
+
+    addColumn: (state, action: PayloadAction<{ title: string }>) => {
+      const { title } = action.payload;
+
+      const newColumn: TColumn = {
+        id: `T-${Date.now()}`,
+        title,
+        tasks: [],
+      };
+
+      state.columns.push(newColumn);
+    },
+    deleteColumn: (state, action: PayloadAction<{ columnId: string }>) => {
+      const { columnId } = action.payload;
+
+      state.columns = state.columns.filter((column) => column.id !== columnId);
+    },
+    editColumn: (state, action: PayloadAction<{ columnId: string; title: string }>) => {
+      const { columnId, title } = action.payload;
+
+      const column = state.columns.find((column) => column.id === columnId);
+
+      if (column) column.title = title;
+    },
   },
 });
 
-export const { addTask, deleteTask } = boardSlice.actions;
+export const { addTask, deleteTask, editTask, addColumn, deleteColumn, editColumn } = boardSlice.actions;
