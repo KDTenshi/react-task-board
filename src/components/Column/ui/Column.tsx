@@ -4,12 +4,14 @@ import type { TColumn } from "../../../shared/types/types";
 import { Task } from "../../Task";
 import { useAppDispatch } from "../../../app/store/appStore";
 import { addTask, deleteColumn, editColumn } from "../../../shared/store/boardSlice";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 
 interface ColumnProps {
   column: TColumn;
 }
 
 const Column: FC<ColumnProps> = ({ column }) => {
+  const { setDroppableNodeRef } = useSortable({ id: column.id, data: { type: "column" } });
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(column.title);
 
@@ -67,14 +69,16 @@ const Column: FC<ColumnProps> = ({ column }) => {
         )}
         {!isEdit && <h2 className={style.Title}>{column.title}</h2>}
       </div>
-      <div className={style.Container}>
+      <div className={style.Container} ref={setDroppableNodeRef}>
         <button className={style.Add} onClick={handleAddTask}>
           Add task
         </button>
         {column.tasks.length === 0 && <h3 className={style.Empty}>No tasks here</h3>}
-        {column.tasks.map((task) => (
-          <Task task={task} key={task.id} />
-        ))}
+        <SortableContext items={column.tasks}>
+          {column.tasks.map((task) => (
+            <Task task={task} key={task.id} />
+          ))}
+        </SortableContext>
       </div>
     </div>
   );

@@ -3,12 +3,16 @@ import style from "./Task.module.css";
 import type { TTask } from "../../../shared/types/types";
 import { useAppDispatch } from "../../../app/store/appStore";
 import { deleteTask, editTask } from "../../../shared/store/boardSlice";
+import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
 
 interface TaskProps {
   task: TTask;
 }
 
 const Task: FC<TaskProps> = ({ task }) => {
+  const { transform, attributes, listeners, setNodeRef } = useSortable({ id: task.id, data: { type: "task" } });
+
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(task.title);
 
@@ -36,8 +40,12 @@ const Task: FC<TaskProps> = ({ task }) => {
     handleEdit();
   };
 
+  const draggingStyle: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+  };
+
   return (
-    <div className={style.Task}>
+    <div className={style.Task} style={draggingStyle} {...attributes} {...listeners} ref={setNodeRef}>
       {isEdit && (
         <form className={style.Edit} onSubmit={handleSubmit}>
           <input

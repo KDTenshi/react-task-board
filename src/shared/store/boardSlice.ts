@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { TColumn, TTask } from "../types/types";
+import { arrayMove } from "@dnd-kit/sortable";
 
 type BoardState = {
   columns: TColumn[];
@@ -75,7 +76,45 @@ export const boardSlice = createSlice({
 
       if (column) column.title = title;
     },
+    changeTaskPosition: (state, action: PayloadAction<{ activeTaskId: string; overTaskId: string }>) => {
+      const { activeTaskId, overTaskId } = action.payload;
+
+      const column = state.columns.find((column) =>
+        column.tasks.some((task) => task.id === activeTaskId || task.id === overTaskId)
+      );
+
+      if (column) {
+        const activeTaskIndex = column.tasks.findIndex((task) => task.id === activeTaskId);
+        const overTaskIndex = column.tasks.findIndex((task) => task.id === overTaskId);
+
+        column.tasks = arrayMove(column.tasks, activeTaskIndex, overTaskIndex);
+      }
+    },
+    changeTaskColumn: (state, action: PayloadAction<{ columnToId: string; taskId: string }>) => {
+      const { columnToId, taskId } = action.payload;
+
+      const columnFrom = state.columns.find((column) => column.tasks.some((task) => task.id === taskId));
+      const columnTo = state.columns.find((column) => column.id === columnToId);
+
+      if (columnFrom && columnTo) {
+        const task = columnFrom.tasks.find((task) => task.id === taskId);
+
+        if (task) {
+          columnFrom.tasks = columnFrom.tasks.filter((task) => task.id !== taskId);
+          columnTo.tasks.push(task);
+        }
+      }
+    },
   },
 });
 
-export const { addTask, deleteTask, editTask, addColumn, deleteColumn, editColumn } = boardSlice.actions;
+export const {
+  addTask,
+  deleteTask,
+  editTask,
+  addColumn,
+  deleteColumn,
+  editColumn,
+  changeTaskPosition,
+  changeTaskColumn,
+} = boardSlice.actions;
