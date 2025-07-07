@@ -22,24 +22,24 @@ export const boardSlice = createSlice({
 
       const column = state.columns.find((column) => column.id === columnId);
 
-      if (column) {
-        const newTask: TTask = {
-          id: `${Date.now()}`,
-          title,
-          date: Date.now(),
-        };
+      if (!column) return;
 
-        column.tasks.push(newTask);
-      }
+      const newTask: TTask = {
+        id: `${Date.now()}`,
+        title,
+        date: Date.now(),
+      };
+
+      column.tasks.push(newTask);
     },
     deleteTask: (state, action: PayloadAction<{ taskId: string }>) => {
       const { taskId } = action.payload;
 
       const column = state.columns.find((column) => column.tasks.some((task) => task.id === taskId));
 
-      if (column) {
-        column.tasks = column.tasks.filter((task) => task.id !== taskId);
-      }
+      if (!column) return;
+
+      column.tasks = column.tasks.filter((task) => task.id !== taskId);
     },
     addColumn: (state, action: PayloadAction<{ title: string }>) => {
       const { title } = action.payload;
@@ -64,12 +64,14 @@ export const boardSlice = createSlice({
         column.tasks.some((task) => task.id === activeTaskId || task.id === overTaskId)
       );
 
-      if (column) {
-        const activeTaskIndex = column.tasks.findIndex((task) => task.id === activeTaskId);
-        const overTaskIndex = column.tasks.findIndex((task) => task.id === overTaskId);
+      if (!column) return;
 
-        column.tasks = arrayMove(column.tasks, activeTaskIndex, overTaskIndex);
-      }
+      const activeTaskIndex = column.tasks.findIndex((task) => task.id === activeTaskId);
+      const overTaskIndex = column.tasks.findIndex((task) => task.id === overTaskId);
+
+      if (activeTaskIndex === -1 || overTaskIndex === -1) return;
+
+      column.tasks = arrayMove(column.tasks, activeTaskIndex, overTaskIndex);
     },
     changeTaskColumn: (state, action: PayloadAction<{ columnToId: string; taskId: string }>) => {
       const { columnToId, taskId } = action.payload;
@@ -77,20 +79,22 @@ export const boardSlice = createSlice({
       const columnFrom = state.columns.find((column) => column.tasks.some((task) => task.id === taskId));
       const columnTo = state.columns.find((column) => column.id === columnToId);
 
-      if (columnFrom && columnTo) {
-        const task = columnFrom.tasks.find((task) => task.id === taskId);
+      if (!columnFrom || !columnTo) return;
 
-        if (task) {
-          columnFrom.tasks = columnFrom.tasks.filter((task) => task.id !== taskId);
-          columnTo.tasks.push(task);
-        }
-      }
+      const task = columnFrom.tasks.find((task) => task.id === taskId);
+
+      if (!task) return;
+
+      columnFrom.tasks = columnFrom.tasks.filter((task) => task.id !== taskId);
+      columnTo.tasks.push(task);
     },
     changeColumnPosition: (state, action: PayloadAction<{ activeColumnId: string; overColumnId: string }>) => {
       const { activeColumnId, overColumnId } = action.payload;
 
       const activeColumnIndex = state.columns.findIndex((column) => column.id === activeColumnId);
       const overColumnIndex = state.columns.findIndex((column) => column.id === overColumnId);
+
+      if (activeColumnIndex === -1 || overColumnIndex === -1) return;
 
       state.columns = arrayMove(state.columns, activeColumnIndex, overColumnIndex);
     },

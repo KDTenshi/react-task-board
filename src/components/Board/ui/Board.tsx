@@ -43,59 +43,54 @@ const Board: FC = () => {
 
     const { current } = active.data;
 
-    if (current) {
-      const { type } = current;
-      const activeId = active.id as string;
+    if (!current) return;
 
-      if (type === "column") {
-        const activeColumn = columns.find((column) => column.id === activeId);
+    const activeId = active.id as string;
 
-        if (activeColumn) dispatch(selectColumn({ column: activeColumn }));
-      }
+    if (current.type === "task") {
+      const activeColumn = columns.find((column) => column.tasks.some((task) => task.id === activeId));
 
-      if (type === "task") {
-        const activeColumn = columns.find((column) => column.tasks.some((task) => task.id === activeId));
+      if (!activeColumn) return;
 
-        if (activeColumn) {
-          const activeTask = activeColumn.tasks.find((task) => task.id === activeId);
+      const activeTask = activeColumn.tasks.find((task) => task.id === activeId);
 
-          if (activeTask) dispatch(selectTask({ task: activeTask, column: activeColumn }));
-        }
-      }
+      if (!activeTask) return;
+
+      dispatch(selectTask({ task: activeTask, column: activeColumn }));
+    }
+
+    if (current.type === "column") {
+      const activeColumn = columns.find((column) => column.id === activeId);
+
+      if (!activeColumn) return;
+
+      dispatch(selectColumn({ column: activeColumn }));
     }
   };
 
   const handleDragOver = (e: DragOverEvent) => {
     const { active, over } = e;
 
-    if (over) {
-      const activeCurrent = active.data.current;
-      const overCurrent = over.data.current;
+    if (!over) return;
+    const activeId = active.id as string;
+    const overId = over.id as string;
 
-      if (activeCurrent && overCurrent) {
-        if (activeCurrent.type === "task") {
-          if (overCurrent.type === "column") {
-            const activeId = active.id as string;
-            const overId = over.id as string;
+    const activeCurrent = active.data.current;
+    const overCurrent = over.data.current;
 
-            dispatch(changeTaskColumn({ taskId: activeId, columnToId: overId }));
-          }
+    if (!activeCurrent || !overCurrent) return;
 
-          if (overCurrent.type === "task") {
-            const activeId = active.id as string;
-            const overId = over.id as string;
-
-            dispatch(changeTaskPosition({ activeTaskId: activeId, overTaskId: overId }));
-          }
-        }
-
-        if (activeCurrent.type === "column") {
-          const activeId = active.id as string;
-          const overId = over.id as string;
-
-          dispatch(changeColumnPosition({ activeColumnId: activeId, overColumnId: overId }));
-        }
+    if (activeCurrent.type === "task") {
+      if (overCurrent.type === "column") {
+        dispatch(changeTaskColumn({ taskId: activeId, columnToId: overId }));
       }
+      if (overCurrent.type === "task") {
+        dispatch(changeTaskPosition({ activeTaskId: activeId, overTaskId: overId }));
+      }
+    }
+
+    if (activeCurrent.type === "column") {
+      dispatch(changeColumnPosition({ activeColumnId: activeId, overColumnId: overId }));
     }
   };
 
