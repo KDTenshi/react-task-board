@@ -41,18 +41,6 @@ export const boardSlice = createSlice({
         column.tasks = column.tasks.filter((task) => task.id !== taskId);
       }
     },
-    editTask: (state, action: PayloadAction<{ taskId: string; title: string }>) => {
-      const { taskId, title } = action.payload;
-
-      const column = state.columns.find((column) => column.tasks.some((task) => task.id === taskId));
-
-      if (column) {
-        const task = column.tasks.find((task) => task.id === taskId);
-
-        if (task) task.title = title;
-      }
-    },
-
     addColumn: (state, action: PayloadAction<{ title: string }>) => {
       const { title } = action.payload;
 
@@ -68,13 +56,6 @@ export const boardSlice = createSlice({
       const { columnId } = action.payload;
 
       state.columns = state.columns.filter((column) => column.id !== columnId);
-    },
-    editColumn: (state, action: PayloadAction<{ columnId: string; title: string }>) => {
-      const { columnId, title } = action.payload;
-
-      const column = state.columns.find((column) => column.id === columnId);
-
-      if (column) column.title = title;
     },
     changeTaskPosition: (state, action: PayloadAction<{ activeTaskId: string; overTaskId: string }>) => {
       const { activeTaskId, overTaskId } = action.payload;
@@ -105,16 +86,23 @@ export const boardSlice = createSlice({
         }
       }
     },
+    changeColumnPosition: (state, action: PayloadAction<{ activeColumnId: string; overColumnId: string }>) => {
+      const { activeColumnId, overColumnId } = action.payload;
+
+      const activeColumnIndex = state.columns.findIndex((column) => column.id === activeColumnId);
+      const overColumnIndex = state.columns.findIndex((column) => column.id === overColumnId);
+
+      state.columns = arrayMove(state.columns, activeColumnIndex, overColumnIndex);
+    },
   },
 });
 
 export const {
   addTask,
   deleteTask,
-  editTask,
   addColumn,
   deleteColumn,
-  editColumn,
   changeTaskPosition,
   changeTaskColumn,
+  changeColumnPosition,
 } = boardSlice.actions;

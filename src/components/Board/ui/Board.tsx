@@ -1,49 +1,66 @@
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import style from "./Board.module.css";
 import { useAppDispatch, useAppSelector } from "../../../app/store/appStore";
 import { Column } from "../../Column";
-import { addColumn, changeTaskColumn, changeTaskPosition } from "../../../shared/store/boardSlice";
-import { DndContext, DragOverlay, pointerWithin, type DragOverEvent, type DragStartEvent } from "@dnd-kit/core";
-import { selectTask, unselectItems } from "../../../shared/store/dndSlice";
+import {
+  addColumn,
+  changeColumnPosition,
+  changeTaskColumn,
+  changeTaskPosition,
+} from "../../../shared/store/boardSlice";
+import {
+  DndContext,
+  DragOverlay,
+  MouseSensor,
+  pointerWithin,
+  useSensor,
+  useSensors,
+  type DragOverEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import { selectColumn, selectTask, unselectItems } from "../../../shared/store/dndSlice";
 import { Task } from "../../Task";
+import { SortableContext } from "@dnd-kit/sortable";
 
 const Board: FC = () => {
   const columns = useAppSelector((state) => state.board.columns);
-  const activeTask = useAppSelector((state) => state.dnd.activeTask);
 
-  const [isAdd, setIsAdd] = useState(false);
-  const [value, setValue] = useState("");
+  const activeTask = useAppSelector((state) => state.dnd.activeTask);
+  const activeColumn = useAppSelector((state) => state.dnd.activeColumn);
+  const activeType = useAppSelector((state) => state.dnd.activeType);
+
+  const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } });
+  const sensors = useSensors(mouseSensor);
 
   const dispatch = useAppDispatch();
 
   const handleAdd = () => {
-    const title = value.trim();
-
-    if (title) {
-      dispatch(addColumn({ title }));
-    }
-
-    setValue("");
-    setIsAdd(false);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleAdd();
+    dispatch(addColumn({ title: "New column" }));
   };
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e;
 
-    const activeId = active.id as string;
+    const { current } = active.data;
 
-    const activeColumn = columns.find((column) => column.tasks.some((task) => task.id === activeId));
+    if (current) {
+      const { type } = current;
+      const activeId = active.id as string;
 
-    if (activeColumn) {
-      const activeTask = activeColumn.tasks.find((task) => task.id === activeId);
+      if (type === "column") {
+        const activeColumn = columns.find((column) => column.id === activeId);
 
-      if (activeTask) {
-        dispatch(selectTask({ task: activeTask, column: activeColumn }));
+        if (activeColumn) dispatch(selectColumn({ column: activeColumn }));
+      }
+
+      if (type === "task") {
+        const activeColumn = columns.find((column) => column.tasks.some((task) => task.id === activeId));
+
+        if (activeColumn) {
+          const activeTask = activeColumn.tasks.find((task) => task.id === activeId);
+
+          if (activeTask) dispatch(selectTask({ task: activeTask, column: activeColumn }));
+        }
       }
     }
   };
@@ -56,18 +73,27 @@ const Board: FC = () => {
       const overCurrent = over.data.current;
 
       if (activeCurrent && overCurrent) {
-        if (overCurrent.type === "column") {
-          const activeId = active.id as string;
-          const overId = over.id as string;
+        if (activeCurrent.type === "task") {
+          if (overCurrent.type === "column") {
+            const activeId = active.id as string;
+            const overId = over.id as string;
 
-          dispatch(changeTaskColumn({ taskId: activeId, columnToId: overId }));
+            dispatch(changeTaskColumn({ taskId: activeId, columnToId: overId }));
+          }
+
+          if (overCurrent.type === "task") {
+            const activeId = active.id as string;
+            const overId = over.id as string;
+
+            dispatch(changeTaskPosition({ activeTaskId: activeId, overTaskId: overId }));
+          }
         }
 
-        if (overCurrent.type === "task") {
+        if (activeCurrent.type === "column") {
           const activeId = active.id as string;
           const overId = over.id as string;
 
-          dispatch(changeTaskPosition({ activeTaskId: activeId, overTaskId: overId }));
+          dispatch(changeColumnPosition({ activeColumnId: activeId, overColumnId: overId }));
         }
       }
     }
@@ -84,29 +110,21 @@ const Board: FC = () => {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         collisionDetection={pointerWithin}
+        sensors={sensors}
       >
-        {columns.map((column) => (
-          <Column column={column} key={column.id} />
-        ))}
-        <DragOverlay>{activeTask && <Task task={activeTask} />}</DragOverlay>
+        <SortableContext items={columns}>
+          {columns.map((column) => (
+            <Column column={column} key={column.id} />
+          ))}
+        </SortableContext>
+        <DragOverlay>
+          {activeType === "task" && activeTask && <Task task={activeTask} />}
+          {activeType === "column" && activeColumn && <Column column={activeColumn} />}
+        </DragOverlay>
       </DndContext>
-      {!isAdd && (
-        <button className={style.Button} onClick={() => setIsAdd(true)}>
-          Add column
-        </button>
-      )}
-      {isAdd && (
-        <form className={style.Add} onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className={style.Input}
-            autoFocus
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onBlur={handleAdd}
-          />
-        </form>
-      )}
+      <button className={style.Button} onClick={handleAdd}>
+        Add column
+      </button>
     </div>
   );
 };

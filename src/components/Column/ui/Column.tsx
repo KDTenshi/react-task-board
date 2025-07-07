@@ -1,19 +1,25 @@
-import { useState, type FC } from "react";
+import { type FC } from "react";
 import style from "./Column.module.css";
 import type { TColumn } from "../../../shared/types/types";
 import { Task } from "../../Task";
 import { useAppDispatch } from "../../../app/store/appStore";
-import { addTask, deleteColumn, editColumn } from "../../../shared/store/boardSlice";
+import { addTask, deleteColumn } from "../../../shared/store/boardSlice";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface ColumnProps {
   column: TColumn;
 }
 
 const Column: FC<ColumnProps> = ({ column }) => {
-  const { setDroppableNodeRef } = useSortable({ id: column.id, data: { type: "column" } });
-  const [isEdit, setIsEdit] = useState(false);
-  const [value, setValue] = useState(column.title);
+  const { attributes, listeners, transform, setNodeRef, setDroppableNodeRef } = useSortable({
+    id: column.id,
+    data: { type: "column" },
+  });
+
+  const draggingStyle: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+  };
 
   const dispatch = useAppDispatch();
 
@@ -25,49 +31,18 @@ const Column: FC<ColumnProps> = ({ column }) => {
     dispatch(deleteColumn({ columnId: column.id }));
   };
 
-  const handleEdit = () => {
-    const title = value.trim();
-
-    if (title) {
-      dispatch(editColumn({ columnId: column.id, title }));
-      setValue(title);
-    } else {
-      setValue(column.title);
-    }
-
-    setIsEdit(false);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleEdit();
-  };
-
   return (
-    <div className={style.Column}>
+    <div className={style.Column} ref={setNodeRef} style={draggingStyle}>
       <div className={style.Head}>
         <div className={style.Actions}>
-          <button className={style.Button} onClick={() => setIsEdit((prev) => !prev)}>
-            Edit
-          </button>
           <button className={style.Button} onClick={handleDelete}>
             Delete
           </button>
-          <button className={style.Button}>Drag</button>
+          <button className={style.Button} {...attributes} {...listeners}>
+            Drag
+          </button>
         </div>
-        {isEdit && (
-          <form className={style.Edit} onSubmit={handleSubmit}>
-            <input
-              type="text"
-              className={style.Input}
-              autoFocus
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onBlur={handleEdit}
-            />
-          </form>
-        )}
-        {!isEdit && <h2 className={style.Title}>{column.title}</h2>}
+        <h2 className={style.Title}>{column.title}</h2>
       </div>
       <div className={style.Container} ref={setDroppableNodeRef}>
         <button className={style.Add} onClick={handleAddTask}>
